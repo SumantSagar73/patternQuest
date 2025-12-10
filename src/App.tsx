@@ -138,18 +138,23 @@ export default function App() {
 
     return (
         <div className={"app-root " + (dark ? 'theme-dark' : 'theme-light')}>
-            <header className="app-header">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: 520 }}>
-                    <div>
-                        <h1>PatternQuest</h1>
+            <header className="topbar">
+                <div className="topbar-left">
+                    <div className="logo">PQ</div>
+                    <div className="title-block">
+                        <h1 className="title">PatternQuest</h1>
                         <p className="subtitle">Observe the pattern, then decode it.</p>
                     </div>
+                </div>
 
-                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                        <div style={{ color: '#9aa4bf' }}>Level {level}</div>
-                        <div style={{ color: '#9aa4bf' }}>{phase === 'flash' ? `Time: ${Math.ceil(remainingMs / 1000)}s` : ''}</div>
-                        <button className="btn btn-ghost" onClick={() => setDark((d) => !d)}>{dark ? 'Light' : 'Dark'}</button>
-                    </div>
+                <div className="topbar-center">
+                    <div className="level-badge">Level {level}</div>
+                    <div className="phase-text">{phase === 'flash' ? 'Observe…' : phase === 'guess' ? 'Select squares that flashed' : 'Results'}</div>
+                </div>
+
+                <div className="topbar-right">
+                    <div className="timer">{phase === 'flash' ? `${Math.ceil(remainingMs / 1000)}s` : ''}</div>
+                    <button className="theme-toggle" onClick={() => setDark((d) => !d)} aria-label="Toggle theme">{dark ? 'Dark' : 'Light'}</button>
                 </div>
             </header>
 
