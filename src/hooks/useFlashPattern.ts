@@ -24,7 +24,7 @@ export default function useFlashPattern(pattern: number[], durationMs = 10000): 
 
         // Toggle every 600ms
         intervalRef.current = window.setInterval(() => {
-            setIsOn((prev) => !prev)
+            setIsOn((prev: boolean) => !prev)
         }, 600)
 
         // Stop flashing after durationMs

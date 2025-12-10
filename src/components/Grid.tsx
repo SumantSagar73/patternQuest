@@ -13,7 +13,7 @@ type Props = {
 const CELL_COUNT = 25
 
 export default function Grid({ level = 1, durationMs = 10000, onSubmit }: Props) {
-    const indices = useMemo(() => Array.from({ length: CELL_COUNT }, (_, i) => i), [])
+    const indices = useMemo<number[]>(() => Array.from({ length: CELL_COUNT }, (_, i) => i), [])
 
     // Pattern for the current level
     const pattern = useMemo(() => getFlashPattern(level), [level])
@@ -43,7 +43,7 @@ export default function Grid({ level = 1, durationMs = 10000, onSubmit }: Props)
 
     function toggleSelect(index: number) {
         if (isFlashing) return
-        setUserSelected((prev) => (prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]))
+        setUserSelected((prev: number[]) => (prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]))
     }
 
     function handleSubmit() {
