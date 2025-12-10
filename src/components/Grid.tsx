@@ -7,12 +7,13 @@ import useFlashPattern from '../hooks/useFlashPattern'
 type Props = {
     level?: number
     durationMs?: number
-    onSubmit?: (selected: number[]) => void
+    onSubmit?: (selected: number[], evaluation?: Evaluation) => void
+    onFlashComplete?: () => void
 }
 
 const CELL_COUNT = 25
 
-export default function Grid({ level = 1, durationMs = 10000, onSubmit }: Props) {
+export default function Grid({ level = 1, durationMs = 10000, onSubmit, onFlashComplete }: Props) {
     const indices = useMemo<number[]>(() => Array.from({ length: CELL_COUNT }, (_, i) => i), [])
 
     // Pattern for the current level
@@ -26,7 +27,11 @@ export default function Grid({ level = 1, durationMs = 10000, onSubmit }: Props)
 
     useEffect(() => {
         setIsFlashing(true)
-        const t = window.setTimeout(() => setIsFlashing(false), durationMs)
+        const t = window.setTimeout(() => {
+            setIsFlashing(false)
+            // notify parent that flash phase completed
+            onFlashComplete?.()
+        }, durationMs)
         return () => clearTimeout(t)
     }, [pattern, durationMs])
 
@@ -39,6 +44,7 @@ export default function Grid({ level = 1, durationMs = 10000, onSubmit }: Props)
     useEffect(() => {
         // Reset selections when level/pattern changes
         setUserSelected([])
+        setEvaluation(null)
     }, [level, pattern])
 
     function toggleSelect(index: number) {
@@ -51,7 +57,7 @@ export default function Grid({ level = 1, durationMs = 10000, onSubmit }: Props)
         const evalResult = evaluateAnswer(pattern, userSelected)
         setEvaluation(evalResult)
 
-        if (onSubmit) onSubmit(userSelected)
+        if (onSubmit) onSubmit(userSelected, evalResult)
     }
 
     return (

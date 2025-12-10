@@ -7,6 +7,22 @@
     --cell-border: rgba(255, 255, 255, 0.06);
 }
 
+/* Light theme overrides */
+.theme-light {
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --muted: #55607a;
+    --accent: #0ea5e9;
+    --cell-bg: #ffffff;
+    --cell-border: rgba(15,23,42,0.06);
+    color: #0b1220;
+}
+
+/* Dark theme (default variables above) */
+.theme-dark {
+    color: #e6eef8;
+}
+
 * {
     box-sizing: border-box
 }
@@ -20,8 +36,8 @@ body,
 body {
     margin: 0;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-    background: linear-gradient(180deg, #071028 0%, #071a2a 100%);
-    color: #e6eef8;
+    background: var(--bg);
+    color: inherit;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -77,19 +93,20 @@ body {
 }
 
 .cell {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+    background: var(--card);
     border: 1px solid var(--cell-border);
     height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
-    transition: transform 120ms ease, box-shadow 120ms ease;
+    border-radius: 10px;
+    transition: transform 180ms cubic-bezier(.2,.9,.2,1), box-shadow 180ms cubic-bezier(.2,.9,.2,1), background 180ms;
+    transform-origin: center center;
 }
 
 .cell:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5)
+    transform: scale(1.04);
+    box-shadow: 0 12px 28px rgba(2,6,23,0.28);
 }
 
 .cell-index {
@@ -99,9 +116,10 @@ body {
 
 /* Flashing visual */
 .cell.flash {
-    box-shadow: 0 0 18px 4px rgba(0, 212, 255, 0.12), inset 0 0 8px rgba(0, 212, 255, 0.06);
+    box-shadow: 0 0 22px 6px rgba(0, 212, 255, 0.12), inset 0 0 10px rgba(0, 212, 255, 0.06);
     border-color: rgba(0, 212, 255, 0.45);
-    transform: translateY(-6px);
+    transform: scale(1.08);
+    animation: flash-pulse 600ms ease-in-out infinite alternate;
 }
 
 /* Selected by user */
@@ -118,10 +136,12 @@ body {
 }
 
 /* Evaluation result styles */
+
 .cell.correct {
     background: linear-gradient(180deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.06));
     border-color: rgba(16, 185, 129, 0.6);
-    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.12);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.12);
+    transform: scale(1.02);
 }
 
 .cell.wrong {
@@ -134,6 +154,16 @@ body {
     outline: 3px solid rgba(250, 204, 21, 0.18);
     outline-offset: -3px;
     border-color: rgba(250, 204, 21, 0.6);
+}
+
+/* Top bar and buttons */
+.btn { padding: 8px 12px; border-radius: 8px; background: transparent; border: 1px solid rgba(255,255,255,0.06); color: inherit }
+.btn:hover { transform: translateY(-2px); }
+.btn-ghost { opacity: 0.85 }
+
+@keyframes flash-pulse {
+    from { transform: scale(1.04); }
+    to { transform: scale(1.08); }
 }
 
 .app-footer {
