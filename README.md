@@ -1,53 +1,115 @@
-# Pattern Quest - Game Requirements
+# PatternQuest — The Logic Decoder Game
 
-## 📌 Overview
-Build a game-like puzzle that tests a user’s ability to decode patterns from visual signals. This assignment is designed to test React + TypeScript skills, logical reasoning, UI creativity, and attention to detail.
+PatternQuest is a small puzzle game that challenges players to decode hidden visual patterns on a 5×5 grid. Each level presents a different rule for which cells flash; the player watches the flashing sequence and then selects the cells they think matched the pattern.
 
-## 🎯 The Game Concept
-Create a game where a 5x5 grid of squares flashes on and off, following a hidden pattern. The user observes the flashing sequence and then tries to guess the underlying logic by selecting the squares they believe were flashing.
-With each level, the rule behind the flashing squares changes — becoming more abstract or complex.
+This repository contains a React + TypeScript implementation (Vite) with a simple CSS-based UI.
 
-## 🧩 Levels & Rules
-| Level | Rule | Description |
-| :--- | :--- | :--- |
-| 1 | Even indices | Flash squares where `index % 2 === 0` |
-| 2 | Diagonals | Flash squares where `(row === col)` or `(row + col === 4)` |
-| 3 | Prime numbers | Flash squares whose index is a prime number |
-| 4 | Center cluster | Flash center (12) and its 4 direct neighbors |
-| 5 | `(row + col) % 3 === 0` | Use this formula to decide flashing squares |
+---
 
-*Free to add more levels.*
+## Demo
 
-## 💡 How the Game Works
-1. **Display** a 5x5 grid of square cells.
-2. **Flash** certain squares according to the current level’s hidden rule (1s on/off using a timer).
-3. **Stop** the animation after ~10 seconds of flashing and prompt the user to select the squares they believe were flashing.
-4. **On submission**:
-    * Compare the selection with the actual rule-based answer.
-    * Provide feedback: ✅ Correct squares, ❌ Incorrect picks.
-    * Optionally show a hint if the answer is wrong.
-5. **Progress** to the next level.
+- Local development instructions are below. A hosted demo (Vercel/Netlify) can be added once the repo is private and deployed.
 
-## ✅ Requirements
-* **React** (functional components with Hooks)
-* **TypeScript**
-* **Styling**: CSS or styled-components (or Tailwind, optional)
-* **No UI libraries** (e.g., no Material UI, Chakra, Shadcn)
-* **No animation libraries** — use CSS transitions or native JS
-* Responsive and clean UI
-* Clean and modular code (preferably using reusable components)
-* Comment important logic
+---
 
-## 🌟 Bonus Features (Optional)
-* Add a level timer or score counter.
-* Add sound feedback or animations.
-* Allow the user to toggle between light/dark themes.
+## Tech stack
 
-## 📦 Deliverables
-* Link to a hosted live version (Vercel, Netlify, etc.)
-* Zip code files
-* `README.md` explaining: How to run the app locally
-* (Optional) Video walkthrough
+- React (functional components + Hooks)
+- TypeScript
+- Vite (build/dev)
+- Plain CSS (no UI or animation libraries)
 
-## 🕓 Deadline
-3 days.
+Optional: Tailwind can be swapped in if preferred.
+
+---
+
+## Game rules (levels)
+
+The 5×5 grid indices run left→right, top→bottom (0..24). Levels implemented:
+
+- Level 1 — Even indices: flash when `index % 2 === 0`.
+- Level 2 — Diagonals: flash when `row === col` OR `row + col === 4`.
+- Level 3 — Prime indices: flash when the index is a prime number.
+- Level 4 — Center cluster: flash center cell (`12`) and its four direct neighbors (`7, 11, 13, 17`).
+- Level 5 — Modular rule: flash when `(row + col) % 3 === 0`.
+
+You can extend levels by adding more rules in `src/utils/rules.ts`.
+
+---
+
+## How the game works (player flow)
+
+1. The game shows a 5×5 grid and automatically flashes the cells for the current level (observation phase).
+2. After the observation (~10s), flashing stops and the player enters the guessing phase.
+3. The player selects the cells they believe flashed and submits their answer.
+4. The game evaluates the answer and highlights:
+     - correct picks (green),
+     - wrong picks (red),
+     - missed correct cells (yellow outline).
+5. The player may retry or proceed to the next level. After level 5 the game shows a completion screen.
+
+---
+
+## Run locally
+
+Prerequisites: Node.js (16+ recommended) and npm (or yarn).
+
+1. Install dependencies
+
+```powershell
+cd <path-to-repo>
+npm install
+```
+
+2. Start development server
+
+```powershell
+npm run dev
+# Open the printed URL (usually http://localhost:5173)
+```
+
+3. Build for production
+
+```powershell
+npm run build
+npm run preview   # serve the production build locally
+```
+
+---
+
+## Folder structure
+
+```
+src/
+    components/      # Grid, Cell and other presentational components
+    hooks/           # Reusable hooks (useFlashPattern)
+    utils/           # Game rules, evaluation helpers
+    styles/          # Global CSS
+    types/           # Extra TypeScript declarations
+    main.tsx         # App bootstrap
+    App.tsx          # Top-level app + level management
+```
+
+Key files:
+
+- `src/utils/rules.ts` — `getFlashPattern(level)` implements level rules.
+- `src/hooks/useFlashPattern.ts` — toggles flashing for observation phase.
+- `src/utils/evaluate.ts` — `evaluateAnswer(correct, selected)` returns `{ correctPicks, wrongPicks, missed }`.
+
+---
+
+## Development notes
+
+- The project intentionally avoids UI libraries and animation libraries — animations are CSS-only.
+- TypeScript types are included; run `npx tsc --noEmit` to type-check.
+- To extend the game, add new level rules in `getFlashPattern` and wire UI/level progression in `App.tsx`.
+
+---
+
+## Credits
+
+- Built as a coding assignment example.
+- Author: (Your Name) — replace with your name before submission.
+
+Thanks for trying PatternQuest — if you want, I can help with deployment (Vercel/Netlify), tests, or polishing UI/UX further.
+
