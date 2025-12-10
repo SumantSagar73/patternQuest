@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Cell from './Cell'
 import { getFlashPattern } from '../utils/rules'
+import { evaluateAnswer, Evaluation } from '../utils/evaluate'
 import useFlashPattern from '../hooks/useFlashPattern'
 
 type Props = {
@@ -32,6 +33,9 @@ export default function Grid({ level = 1, durationMs = 10000, onSubmit }: Props)
     // User selections during guess phase
     const [userSelected, setUserSelected] = useState<number[]>([])
 
+    // After submission we store evaluation results to show feedback highlights
+    const [evaluation, setEvaluation] = useState<Evaluation | null>(null)
+
     useEffect(() => {
         // Reset selections when level/pattern changes
         setUserSelected([])
@@ -43,22 +47,35 @@ export default function Grid({ level = 1, durationMs = 10000, onSubmit }: Props)
     }
 
     function handleSubmit() {
+        // Evaluate and set visual feedback
+        const evalResult = evaluateAnswer(pattern, userSelected)
+        setEvaluation(evalResult)
+
         if (onSubmit) onSubmit(userSelected)
     }
 
     return (
         <div>
             <div className="grid" role="grid" aria-label="Pattern grid">
-                {indices.map((index) => (
-                    <Cell
-                        key={index}
-                        index={index}
-                        isFlashed={activeFlash.includes(index)}
-                        isSelected={userSelected.includes(index)}
-                        disabled={isFlashing}
-                        onClick={() => toggleSelect(index)}
-                    />
-                ))}
+                {indices.map((index) => {
+                    const isCorrect = evaluation ? evaluation.correctPicks.includes(index) : false
+                    const isWrong = evaluation ? evaluation.wrongPicks.includes(index) : false
+                    const isMissed = evaluation ? evaluation.missed.includes(index) : false
+
+                    return (
+                        <Cell
+                            key={index}
+                            index={index}
+                            isFlashed={activeFlash.includes(index)}
+                            isSelected={userSelected.includes(index)}
+                            disabled={isFlashing || !!evaluation}
+                            onClick={() => toggleSelect(index)}
+                            isCorrect={isCorrect}
+                            isWrong={isWrong}
+                            isMissed={isMissed}
+                        />
+                    )
+                })}
             </div>
 
             <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 12 }}>
