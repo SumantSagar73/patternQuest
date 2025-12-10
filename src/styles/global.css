@@ -57,6 +57,22 @@ body{
 .cell:hover{ transform: translateY(-4px); box-shadow: 0 8px 18px rgba(0,0,0,0.5) }
 .cell-index{ color:var(--muted); font-weight:600 }
 
+/* Flashing visual */
+.cell.flash{
+  box-shadow: 0 0 18px 4px rgba(0,212,255,0.12), inset 0 0 8px rgba(0,212,255,0.06);
+  border-color: rgba(0,212,255,0.45);
+  transform: translateY(-6px);
+}
+
+/* Selected by user */
+.cell.selected{
+  background: linear-gradient(180deg, rgba(3,105,161,0.12), rgba(2,78,123,0.06));
+  box-shadow: 0 6px 16px rgba(2,78,123,0.18);
+  border-color: rgba(3,105,161,0.6);
+}
+
+.cell.disabled{ cursor: default; pointer-events: none; opacity: 0.95 }
+
 .app-footer{ margin-top:18px; color:var(--muted); font-size:13px }
 
 @media (max-width:420px){

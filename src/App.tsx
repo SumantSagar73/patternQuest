@@ -1,5 +1,6 @@
 import React from 'react'
 import Grid from './components/Grid'
+import { getFlashPattern } from './utils/rules'
 
 export default function App() {
   return (
@@ -12,7 +13,17 @@ export default function App() {
       <main className="main-content">
         <section className="grid-wrapper">
           <div className="observe-banner">Observe the grid — debug mode</div>
-          <Grid />
+          <Grid
+            level={2}
+            durationMs={10000}
+            onSubmit={(selected) => {
+              // For Phase 4 scaffolding show a quick feedback
+              const correct = getFlashPattern(2)
+              const correctCount = selected.filter((s) => correct.includes(s)).length
+              const percent = Math.round((correctCount / correct.length) * 100)
+              alert(`You selected ${selected.length} cells. Correct: ${correctCount}/${correct.length} (${percent}%)`)
+            }}
+          />
         </section>
       </main>
 
