@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Grid from './components/Grid'
+import Header from './components/Header'
+import LevelInfo from './components/LevelInfo'
 import { getFlashPattern } from './utils/rules'
 import type { Evaluation } from './utils/evaluate'
+import FeedbackBanner from './components/FeedbackBanner'
 
 export default function App() {
     const FLASH_DURATION = 10000
@@ -118,17 +121,17 @@ export default function App() {
                         </div>
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                             <div style={{ color: '#9aa4bf' }}>Level {level - 1}</div>
-                            <button className="btn" onClick={() => setDark((d) => !d)}>{dark ? 'Light' : 'Dark'}</button>
+                            <button className="pq-action-btn pq-btn-ghost" onClick={() => setDark((d) => !d)}>{dark ? 'Light' : 'Dark'}</button>
                         </div>
                     </div>
                 </header>
                 <main className="main-content">
-                    <section className="grid-wrapper">
+                    <section className="pq-grid-wrap">
                         <div style={{ textAlign: 'center', color: '#9aa4bf' }}>
                             🎉 Congratulations — You completed PatternQuest!
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 16 }}>
-                            <button className="btn" onClick={() => setLevel(1)}>Play Again</button>
+                            <button className="pq-action-btn pq-btn-primary" onClick={() => setLevel(1)}>Play Again</button>
                         </div>
                     </section>
                 </main>
@@ -138,28 +141,11 @@ export default function App() {
 
     return (
         <div className={"app-root " + (dark ? 'theme-dark' : 'theme-light')}>
-            <header className="topbar">
-                <div className="topbar-left">
-                    <div className="logo">PQ</div>
-                    <div className="title-block">
-                        <h1 className="title">PatternQuest</h1>
-                        <p className="subtitle">Observe the pattern, then decode it.</p>
-                    </div>
-                </div>
-
-                <div className="topbar-center">
-                    <div className="level-badge">Level {level}</div>
-                    <div className="phase-text">{phase === 'flash' ? 'Observe…' : phase === 'guess' ? 'Select squares that flashed' : 'Results'}</div>
-                </div>
-
-                <div className="topbar-right">
-                    <div className="timer">{phase === 'flash' ? `${Math.ceil(remainingMs / 1000)}s` : ''}</div>
-                    <button className="theme-toggle" onClick={() => setDark((d) => !d)} aria-label="Toggle theme">{dark ? 'Dark' : 'Light'}</button>
-                </div>
-            </header>
+            <Header dark={dark} onToggle={() => setDark((d) => !d)} />
+            <LevelInfo level={level} phase={phase} remainingMs={remainingMs} />
 
             <main className="main-content">
-                <section className="grid-wrapper">
+                <section className="pq-grid-wrap">
                     <div className="observe-banner">Level {level} — {phase === 'flash' ? 'Observe…' : phase === 'guess' ? 'Select squares that flashed' : 'Results'}</div>
 
                     <Grid
@@ -167,16 +153,15 @@ export default function App() {
                         durationMs={10000}
                         onFlashComplete={handleFlashComplete}
                         onSubmit={handleSubmit}
+                        phase={phase}
                     />
 
                     {phase === 'feedback' && evaluationResult && (
                         <div style={{ marginTop: 14, textAlign: 'center' }}>
-                            <div style={{ color: '#9aa4bf' }}>
-                                You selected {userSelected.length} cells. Correct: {evaluationResult.correctPicks.length} • Missed: {evaluationResult.missed.length} • Wrong: {evaluationResult.wrongPicks.length}
-                            </div>
+                            <FeedbackBanner evaluation={evaluationResult} />
                             <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 8 }}>
-                                <button className="btn" onClick={handleNextLevel}>Next Level</button>
-                                <button className="btn btn-ghost" onClick={handleRetry}>Retry Level</button>
+                                <button className="pq-action-btn pq-btn-primary" onClick={handleNextLevel}>Next Level</button>
+                                <button className="pq-action-btn pq-btn-ghost" onClick={handleRetry}>Retry Level</button>
                             </div>
                         </div>
                     )}

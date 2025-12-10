@@ -1,0 +1,149 @@
+/*
+  PatternQuest Global Styles
+  - Light/Dark themes using CSS variables
+  - pq- prefixed classes for component styling
+  - Responsive layout and grid sizing per spec
+  - Smooth transitions and flash animation
+*/
+
+:root {
+  /* Light mode defaults */
+  --bg: #F4F5F7;
+  --text: #1A1A1A;
+  --muted: #59606B;
+  --border: #D4D7DD;
+  --card: #FFFFFF;
+  --cell-default: #FFFFFF;
+  --cell-border: #D4D7DD;
+  --flash: #FFE066;
+  --selected: #6DA4FF;
+  --correct: #98E6A7;
+  --incorrect: #FF6B6B;
+  --missed: #FFD93D;
+  --radius: 10px;
+  --gap: 8px; /* between cells */
+  --max-grid-desktop: 450px;
+  --max-grid-tablet: 350px;
+  --max-grid-mobile: 270px;
+}
+
+/* Dark theme overrides */
+.theme-dark,
+body.theme-dark { /* body can also be used */ }
+
+.theme-dark {
+  --bg: #0D1117;
+  --text: #E6EDF3;
+  --muted: #9FA8B3;
+  --border: #30363D;
+  --card: #161B22;
+  --cell-default: #161B22;
+  --cell-border: #30363D;
+  --flash: #F4D03F;
+  --selected: #1F6FEB;
+  --correct: #2ECC71;
+  --incorrect: #E74C3C;
+  --missed: #F4D03F;
+}
+
+/* Reset and layout */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body { margin: 0; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+.app-root { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 28px 16px; }
+
+/* Header */
+.pq-header { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 760px; margin-bottom: 16px; gap: 12px; }
+.pq-header-left { display: flex; align-items: center; gap: 12px; }
+.pq-logo { width: 48px; height: 48px; border-radius: 8px; background: linear-gradient(180deg, rgba(109,164,255,0.95), rgba(109,164,255,0.85)); display: grid; place-items: center; color: #062B3A; font-weight: 700; font-size: 18px; }
+.pq-title { display: flex; flex-direction: column; line-height: 1; }
+.pq-title-main { font-weight: 700; font-size: 18px; margin: 0; }
+.pq-title-sub { font-size: 12px; color: var(--muted); }
+.pq-header-right { display: flex; align-items: center; gap: 8px; }
+.pq-theme-toggle { padding: 8px 10px; border-radius: 8px; background: transparent; border: 1px solid var(--cell-border); color: var(--text); cursor: pointer; font-weight: 600 }
+
+/* Level Info */
+.pq-level { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 760px; margin-bottom: 16px; padding: 0 6px; }
+.pq-level-left { display: flex; flex-direction: column; }
+.pq-level-number { font-size: 20px; font-weight: 700; }
+.pq-level-sub { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.pq-level-right { display: flex; align-items: center; gap: 8px; }
+.pq-timer { font-weight: 700; color: var(--muted); font-size: 13px; }
+
+/* Main layout and wrapper */
+.main-content { width: 100%; display: flex; justify-content: center; }
+.pq-grid-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.pq-grid-container { width: 100%; max-width: var(--max-grid-desktop); display: flex; justify-content: center; }
+.pq-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--gap); width: 100%; max-width: var(--max-grid-desktop); }
+
+/* Cells - aspect-ratio keeps squares */
+.pq-cell { aspect-ratio: 1; background: var(--cell-default); border: 1px solid var(--cell-border); border-radius: var(--radius); display: grid; place-items: center; cursor: default; user-select: none; transition: background-color 220ms ease, transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, opacity 220ms ease; }
+.pq-cell .pq-cell-inner { width: 100%; height: 100%; display:flex; align-items:center; justify-content:center; position: relative; }
+.pq-cell .pq-cell-index { font-size: 12px; color: var(--muted); }
+.pq-cell .pq-cell-dot { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.85); transform: translateY(-12px); }
+
+/* Default interactive behavior: pointer in guess phase - set via class .pq-clickable on wrapper or per .pq-cell:not(.disabled) */
+.pq-clickable .pq-cell { cursor: pointer; }
+
+/* Flash state - warm glow and soft pulse */
+.pq-cell.flash { background: linear-gradient(180deg, rgba(255,224,102,0.12), rgba(255,224,102,0.06)); box-shadow: 0 8px 20px rgba(255,224,102,0.18); border-color: rgba(255,224,102,0.45); animation: pq-flash 300ms ease-in-out; }
+
+/* Selected state */
+.pq-cell.selected { background: linear-gradient(180deg, rgba(109,164,255,0.14), rgba(109,164,255,0.06)); border-color: rgba(109,164,255,0.55); box-shadow: 0 8px 22px rgba(109,164,255,0.12); }
+.pq-cell.selected:hover { transform: translateY(-2px); }
+
+/* Correct / Incorrect / Missed states */
+.pq-cell.correct { background: linear-gradient(180deg, rgba(152,230,167,0.14), rgba(152,230,167,0.06)); border-color: rgba(152,230,167,0.56); box-shadow: 0 8px 20px rgba(152,230,167,0.12); }
+.pq-cell.incorrect { background: linear-gradient(180deg, rgba(255,107,107,0.08), rgba(255,107,107,0.03)); border-color: rgba(255,107,107,0.6); box-shadow: 0 8px 18px rgba(255,107,107,0.12); }
+.pq-cell.missed { background: var(--cell-default); outline: 3px solid rgba(255,217,61,0.18); outline-offset: -4px; border-color: rgba(255,217,61,0.45); }
+
+/* Disabled cell (not interactive) */
+.pq-cell.disabled { cursor: default; opacity: 0.95; pointer-events: none; }
+
+/* Focus ring for keyboard accessibility */
+.pq-cell:focus { outline: none; box-shadow: 0 0 0 3px rgba(109,164,255,0.18); transform: translateY(-2px); }
+
+/* Buttons / ActionBar */
+.pq-actions { display:flex; gap: 10px; margin-top: 8px; align-items: center; }
+.pq-action-btn { padding: 12px 18px; border-radius: 999px; font-weight: 700; border: 0; cursor: pointer; transition: transform 160ms ease, box-shadow 160ms ease; }
+.pq-action-btn:active { transform: translateY(0); }
+.pq-btn-primary { background: var(--selected); color: #04202A; box-shadow: 0 12px 32px rgba(14, 82, 146, 0.12); }
+.pq-btn-ghost { background: transparent; border: 1px solid var(--cell-border); color: var(--text); }
+.pq-actions .pq-action-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* Feedback banner */
+.pq-feedback { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: rgba(0,0,0,0.03); color: var(--muted); display: flex; gap: 10px; align-items: center; justify-content: center; }
+.pq-feedback .pq-feedback-item { font-weight: 700; }
+
+/* Footer */
+.app-footer { margin-top: 18px; color: var(--muted); font-size: 12px; }
+
+/* Animations */
+@keyframes pq-flash { 0% { opacity: 1; transform: scale(1.02); } 100% { opacity: 0.95; transform: scale(1.06); } }
+
+/* Responsiveness */
+@media (max-width: 900px) {
+  .pq-header { max-width: 680px; }
+}
+
+@media (max-width: 640px) {
+  .pq-header { gap: 8px; }
+  .pq-title-main { font-size: 16px; }
+  .pq-level-number { font-size: 18px; }
+  :root { --gap: 6px; }
+  .pq-grid { max-width: var(--max-grid-tablet); }
+}
+
+@media (max-width: 420px) {
+  .pq-grid { max-width: var(--max-grid-mobile); gap: 6px; }
+  .pq-actions { width: 100%; flex-direction: column; gap: 8px; }
+  .pq-action-btn { width: 100%; }
+  .pq-title-main { font-size: 15px; }
+}
+
+/* Utility spacing */
+.u-center { display: flex; align-items: center; justify-content: center; }
+
+/* Small helpers */
+.hidden { display: none; }
